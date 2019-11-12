@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1573566424822.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3573672370",
+    "id" : "F22F5426",
+    "lastKnownWriteTime" : 1573572774,
+    "last_content_update" : 1573572774556,
+    "path" : "G:/Mi unidad/0_Aprendiendo/FlexDashboard_multas/ejemplo_leaflet.r",
+    "project_path" : "ejemplo_leaflet.r",
+    "properties" : {
+        "cursorPosition" : "18,20",
+        "scrollLine" : "1",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

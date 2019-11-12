@@ -1,0 +1,193 @@
+# Importación y tramiento inicial de los datos.
+
+
+## Carga de librerías
+
+```{r ,message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(inspectdf)
+```
+
+
+## Importamos los datos
+
+Por alguna razón los tres primeros archivos csv los datos se encuentran separados por comas, mientras que en el cuarto el separador elegido es el punto y coma. Así que tenemos que importarlos por separado.
+
+```{r , message=FALSE, warning=FALSE}
+data_path <- "data/original"
+comma_files <- c("658.csv", "659.csv", "660.csv")
+
+# En el caso de los tres primeros archivos al mismo tiempo que los importamos los unimos ya en un solo dataset
+
+data <- comma_files %>% 
+        map(~ read_csv(file.path(data_path, .),
+            locale = locale(encoding="ISO-8859-2"),
+            col_types = cols(.default = "c"))) %>%
+            reduce(rbind) 
+
+# La columna "AÑO" en vez de con una "Ñ" aparece como una n mayúscula con una tilde. Lo cambiamos
+# para que la unión posterior con los datos de 2018 no dé problemas.
+colnames(data)[5] <- "AÑO"
+
+# ,col_types = cols(.default = "c")
+
+# Nos devuelve un mensaje con algunos errores de "parseo" de datos. Como en principio es un número muy limitado de momento lo obviamos.
+
+data_2018 <- read_delim("data/original/661.csv", delim = ";", col_types = cols(.default = "c"))
+
+# En este caso también tenemos un número limitado de errores. Lo revisaremos más adelante.
+
+data <- bind_rows(data, data_2018)
+```
+
+## Exploración inicial
+
+Tenemos un dataset con 16 columnas y 250.171 registros.
+```{r , message=FALSE}
+
+dim(data)
+```
+
+Para poder "ver" algo antes tendremos que realizar algunos cambios de formatos a las variables
+
+```{r , message=FALSE}
+
+numeric_features <- c("IMPORTE", "DESCUENTO", "PUNTOS", "LATITUD", "LONGITUD")
+factor_features <- c("TIPO", "CALIFICACION", "LUGAR", "INFRACCION")
+
+for (i in numeric_features)
+
+data[[i]] <- as.numeric(data[[i]]) 
+
+for (i in factor_features)
+
+data[[i]] <- as.factor(data[[i]]) 
+
+
+```
+
+```{r , message=FALSE, warning=FALSE}
+summary(data)
+
+```
+
+
+```{r , message=FALSE, warning=FALSE}
+table(data$TIPO, data$CALIFICACION)
+
+```
+
+```{r , message=FALSE, warning=FALSE}
+foto_rojo_ejemplos <- data %>% filter(TIPO == "Foto Rojo")
+
+head(foto_rojo_ejemplos, 10)
+
+```
+
+```{r , message=FALSE, warning=FALSE}
+ORA_ejemplos <- data %>% filter(TIPO == "ORA")
+
+head(ORA_ejemplos, 10)
+```
+```{r , message=FALSE, warning=FALSE}
+Trafico_ejemplos <- data %>% filter(TIPO == "Tráfico")
+
+head(Trafico_ejemplos, 10)
+```
+
+```{r , message=FALSE, warning=FALSE}
+Velocidad_ejemplos <- data %>% filter(TIPO == "Velocidad")
+
+head(Velocidad_ejemplos, 10)
+
+```
+
+
+Creamos una variable con la fecha y hora de cada multa.
+```{r , message=FALSE, warning=FALSE}
+
+data <- data %>% mutate(date = ymd(str_c(AÑO, MES, DIA, sep = "-")),
+                        date_time = ymd_hm(str_c(date, HORA, sep = " "))) %>% 
+                        select(-date) %>% 
+                        filter(!is.na(date_time)) # Elimino 20 registros con datetime = NA (problema a resolver mas adelante)
+
+data_multas_0 <- data %>% select(date_time, TIPO, CALIFICACION, IMPORTE) 
+
+write_csv(data_multas_0, "data/finales/data_multas_0.csv")
+write_csv(data, "data_multas.csv")
+
+```
+
+### Número de multas
+
+Número de multas por tipo de multa
+```{r , message=FALSE, warning=FALSE}
+
+num_multas_por_tipo <- ggplot(data = data_multas_0, aes(TIPO)) + 
+                      geom_bar()
+
+num_multas_por_tipo
+
+```
+
+Número de multas por calificación (gravedad)
+```{r , message=FALSE, warning=FALSE}
+
+num_multas_por_calificacion <- ggplot(data = data_multas_0, aes(CALIFICACION)) + 
+                      geom_bar()
+
+num_multas_por_calificacion
+
+```
+
+
+Número de multas al año 
+```{r , message=FALSE, warning=FALSE}
+
+num_multas_por_ano_data <- data %>% group_by("Año" = year(date_time)) %>% summarise(Numero_Multas_Anual = sum(IMPORTE, na.rm = TRUE))
+
+num_multas_por_ano <- ggplot(data = num_multas_por_ano_data, aes(y = Numero_Multas_Anual , x = Año, group=1)) + 
+                      geom_line() +
+  ylim(0, 10000000)
+
+num_multas_por_ano
+
+```
+
+Importes anuales totales de las multas. Varias opciones
+
+
+```{r , message=FALSE, warning=FALSE}
+
+ggplot(data) +
+  stat_summary(aes(x = year(date_time), y = IMPORTE), 
+               fun.y = sum, 
+               geom = "line",
+               group = 1) +
+  ylim(0, 10000000)
+
+
+```
+
+Importe de multas por año 
+```{r , message=FALSE, warning=FALSE}
+
+importe_multas_por_ano_data <- data %>% group_by("Año" = year(date_time)) %>% summarise(Importe_Total_Anual = sum(IMPORTE, na.rm = TRUE))
+
+importe_multas_por_ano <- ggplot(data = importe_multas_por_ano_data, aes(y = Importe_Total_Anual , x = Año, group=1)) + 
+                      geom_line() +
+  ylim(0, 10000000)
+
+importe_multas_por_ano
+
+```
+
+
+
+#### Generacion tablas para gráficos Shiny
+
+```{r , message=FALSE, warning=FALSE}
+
+
+```

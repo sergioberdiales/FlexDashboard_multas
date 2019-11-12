@@ -1,0 +1,201 @@
+---
+title: "Multas de tráfico. Datos: Ayuntamiento de Gijón - 2015-2018"
+author: "Sergio Berdiales"
+date: "12/11/2019"
+output: 
+  flexdashboard::flex_dashboard
+---
+
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(plotly)
+library(forcats)
+```
+
+
+```{r load_data, include = FALSE}
+multas <- read_csv('data_multas.csv', col_types = cols(.default = "c"))
+
+
+numeric_features <- c("IMPORTE", "DESCUENTO", "PUNTOS", "LATITUD", "LONGITUD")
+factor_features <- c("TIPO", "CALIFICACION", "LUGAR", "INFRACCION")
+
+for (i in numeric_features)
+
+multas[[i]] <- as.numeric(multas[[i]]) 
+
+for (i in factor_features)
+
+multas[[i]] <- as.factor(multas[[i]]) 
+
+multas$date_time <- ymd_hms(multas$date_time)
+
+
+
+
+# Reordenamos los niveles de la variable CALIFICACION
+
+multas <- multas %>% 
+  mutate(CALIFICACION = fct_relevel(CALIFICACION, c("Leve", "Grave", "Muy Grave"))) %>%
+  rename(Tipo = TIPO,
+         Calificacion = CALIFICACION,
+         Importe = IMPORTE)
+  
+
+```
+
+Tipología, importes y evolución
+===================================== 
+
+Column
+-----------------------------------------------------------------------
+  
+### Evolución anual del número de multas y gravedad
+  
+```{r plot1}
+
+p <- multas %>%
+  mutate(Año = year(date_time)) %>%
+  group_by(Año, Calificacion) %>%
+  summarize(`Número de multas` = n()) %>%
+  ggplot(aes(x = Año, y = `Número de multas`, fill = Calificacion)) +
+  theme_bw() +
+  theme(legend.title = element_blank()) +
+  geom_bar(stat = 'identity') + 
+    scale_fill_manual("legend", values = c("Leve" = "#228B22", "Grave" = "#FF8C00", "Muy Grave" = "red"))
+
+ggplotly(p)
+
+```
+
+### Evolución anual del importe total en euros y gravedad
+  
+```{r}
+
+p <- multas %>%
+  mutate(Año = year(date_time)) %>%
+  group_by(Año, Calificacion) %>%
+  summarize(`Importe multas (€)` = sum(Importe, na.rm=TRUE)) %>%
+  ggplot(aes(x = Año, y = `Importe multas (€)`, fill = Calificacion)) +
+  theme_bw() +
+  theme(legend.title = element_blank()) +
+  geom_bar(stat = 'identity') + 
+    scale_fill_manual("legend", values = c("Leve" = "#228B22", "Grave" = "#FF8C00", "Muy Grave" = "red"))
+
+ggplotly(p)
+
+```
+
+
+
+
+Column
+-----------------------------------------------------------------------
+  
+### Número de multas por tipo de infracción y gravedad
+  
+```{r}
+
+p <- multas %>%
+  mutate(Año = year(date_time)) %>%
+  group_by(Tipo, Calificacion) %>%
+  summarize(`Número de multas` = n()) %>%
+  ggplot(aes(x = Tipo, y = `Número de multas`, fill = Calificacion)) +
+  theme_bw() +
+  theme(legend.title = element_blank(), 
+        axis.text.x=element_text(size=rel(0.8))) +
+  geom_bar(stat = 'identity') + 
+    scale_fill_manual("legend", values = c("Leve" = "#228B22", "Grave" = "#FF8C00", "Muy Grave" = "red"))
+
+ggplotly(p)
+
+```
+
+### Importe total en euros por Tipo de infracción y gravedad
+
+```{r}
+
+p <- multas %>%
+  mutate(Año = year(date_time)) %>%
+  group_by(Calificacion, Tipo) %>%
+  summarize(`Importe multas (€)` = sum(Importe, na.rm=TRUE)) %>%
+  ggplot(aes(x = Tipo, y = `Importe multas (€)`, fill = Calificacion)) +
+  theme_bw() +
+  theme(legend.title = element_blank(),
+        axis.text.x=element_text(size=rel(0.8))) +
+  geom_bar(stat = 'identity') + 
+    scale_fill_manual("legend", values = c("Leve" = "#228B22", "Grave" = "#FF8C00", "Muy Grave" = "red"))
+
+ggplotly(p)
+```
+
+Column
+-----------------------------------------------------------------------
+  
+### Número de multas por mes del año y gravedad
+  
+```{r}
+
+p <- multas %>%
+  mutate(Mes = as.factor(month(date_time))) %>%
+  group_by(Mes, Calificacion) %>%
+  summarize(`Número de multas` = n()) %>%
+  ggplot(aes(x = Mes, y = `Número de multas`, fill = Calificacion)) +
+  theme_bw() +
+  theme(legend.title = element_blank()) +
+  geom_bar(stat = 'identity') + 
+    scale_fill_manual("legend", values = c("Leve" = "#228B22", "Grave" = "#FF8C00", "Muy Grave" = "red"))
+
+ggplotly(p)
+```
+
+### Número de multas por importe
+
+```{r}
+
+p <- multas %>%
+  mutate(Importe = as.factor(Importe)) %>%
+  group_by(Calificacion, Importe) %>%
+  summarize(`Número de multas` = n()) %>%
+  ggplot(aes(x = Importe, y = `Número de multas`, fill = Calificacion)) +
+  theme_bw() +
+  theme(legend.title = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_bar(stat = 'identity') + 
+    scale_fill_manual("legend", values = c("Leve" = "#228B22", "Grave" = "#FF8C00", "Muy Grave" = "red"))
+
+ggplotly(p)
+```
+
+Mapa de infracciones "Muy Graves"
+=====================================     
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+```{r , include=FALSE}
+infracciones_muy_graves <- multas %>% filter(Calificacion == "Muy Grave",
+                                   !is.na(LONGITUD),
+                                   !is.na(LATITUD))
+```
+
+### Localizaciones infracciones graves 2015-2017
+
+```{r}
+
+library(leaflet)
+m <- leaflet(data = infracciones_muy_graves)  %>%
+              addTiles() %>%  # Añade por defecto los Tiles de  OpenStreetMap
+              addCircleMarkers(lng = ~LONGITUD, lat = ~LATITUD, 
+                         fill = TRUE, 
+                         color = 'red',
+                         stroke = FALSE,
+                         radius = 10,
+                         fillOpacity = 0.5)
+m  # Imprime el mapa
+```

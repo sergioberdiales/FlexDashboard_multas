@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1573566834743.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "9FF07AFB",
+    "lastKnownWriteTime" : 8028074750225051768,
+    "last_content_update" : 1573566834743,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "DB7EA09D",
+        "caption" : "multas",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=multas&cache_key=DB7EA09D",
+        "displayedObservations" : "249971",
+        "environment" : "",
+        "expression" : "multas",
+        "object" : "multas",
+        "preview" : "0",
+        "totalObservations" : "249971",
+        "variables" : "17"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

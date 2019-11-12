@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1573567034698.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4F654FB6",
+    "lastKnownWriteTime" : 1573559384,
+    "last_content_update" : 1573559384,
+    "path" : "G:/Mi unidad/0_Aprendiendo/Multas_Gijon_Exploracion_Datos/01-Importacion_tratamiento_inicial_datos.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "67,3",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

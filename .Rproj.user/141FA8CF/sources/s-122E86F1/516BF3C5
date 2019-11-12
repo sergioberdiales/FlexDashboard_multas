@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1573565599676.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1373756714",
+    "id" : "516BF3C5",
+    "lastKnownWriteTime" : 1573573125,
+    "last_content_update" : 1573573126058,
+    "path" : "G:/Mi unidad/0_Aprendiendo/FlexDashboard_multas/Multas_dashboard.rmd",
+    "project_path" : "Multas_dashboard.rmd",
+    "properties" : {
+        "cursorPosition" : "174,33",
+        "last_setup_crc32" : "122E86F1e31047a3",
+        "scrollLine" : "172"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

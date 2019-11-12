@@ -1,0 +1,3 @@
+"0","foto_rojo_ejemplos <- data %>% filter(TIPO == ""Foto Rojo"")"
+"0",""
+"0","head(foto_rojo_ejemplos, 10)"

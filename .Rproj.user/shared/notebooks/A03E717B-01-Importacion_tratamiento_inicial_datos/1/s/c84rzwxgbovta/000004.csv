@@ -1,0 +1,3 @@
+"0","ORA_ejemplos <- data %>% filter(TIPO == ""ORA"")"
+"0",""
+"0","head(ORA_ejemplos, 10)"

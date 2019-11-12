@@ -1,0 +1,7 @@
+"0",""
+"0","ggplot(data) +"
+"0","  stat_summary(aes(x = year(date_time), y = IMPORTE), "
+"0","               fun.y = sum, "
+"0","               geom = ""line"","
+"0","               group = 1) +"
+"0","  ylim(0, 10000000)"

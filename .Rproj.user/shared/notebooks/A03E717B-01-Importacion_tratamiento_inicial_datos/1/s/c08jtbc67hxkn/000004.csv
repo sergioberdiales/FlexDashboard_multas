@@ -1,0 +1,3 @@
+"0","Trafico_ejemplos <- data %>% filter(TIPO == ""Tráfico"")"
+"0",""
+"0","head(Trafico_ejemplos, 10)"

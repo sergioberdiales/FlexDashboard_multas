@@ -1,0 +1,6 @@
+"0",""
+"0","num_multas_por_calificacion <- ggplot(data = data_multas_0, aes(CALIFICACION)) + "
+"0","                      geom_bar()"
+"0",""
+"0","num_multas_por_calificacion"
+"0",""
